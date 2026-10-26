@@ -1,8 +1,6 @@
 "use client";
-import { db } from "@/utils/db";
-import { CoverLetterDesc } from "@/utils/schema";
+import { getUserCoverLetters } from "@/actions/dashboard";
 import { useUser } from "@clerk/clerk-react";
-import { desc, eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
 import { Loader2Icon } from "lucide-react";
 import CoverLetterCard from "./CoverLetterCard"; // You will create this similar to QuestionCardList
@@ -19,13 +17,7 @@ const CoverLetterList = () => {
   const fetchCoverLetters = async () => {
     setLoading(true);
     try {
-      const response = await db
-        .select()
-        .from(CoverLetterDesc)
-        .where(
-          eq(CoverLetterDesc.userEmail, user?.primaryEmailAddress?.emailAddress)
-        )
-        .orderBy(desc(CoverLetterDesc.id));
+      const response = await getUserCoverLetters();
 
       setCoverLetters(response);
     } catch (error) {

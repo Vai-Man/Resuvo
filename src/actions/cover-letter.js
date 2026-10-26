@@ -1,3 +1,5 @@
+"use server";
+
 import { db } from "@/utils/db";
 import { fetchAIResponse } from "@/utils/GeminiAIModal";
 import { CoverLetterDesc } from "@/utils/schema";

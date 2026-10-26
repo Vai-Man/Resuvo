@@ -1,8 +1,6 @@
 "use client";
-import { db } from "@/utils/db";
-import { MockInterview } from "@/utils/schema";
+import { getUserInterviews } from "@/actions/dashboard";
 import { useUser } from "@clerk/clerk-react";
-import { desc, eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
 import InterviewCardList from "./InterviewCardList";
 import { Loader2Icon } from "lucide-react";
@@ -18,11 +16,7 @@ const InterviewList = () => {
 
   const GetInterviewList = async () => {
     setLoading(true); // start loading
-    const response = await db
-      .select()
-      .from(MockInterview)
-      .where(eq(MockInterview.createdBy, user?.primaryEmailAddress?.emailAddress))
-      .orderBy(desc(MockInterview.id));
+    const response = await getUserInterviews();
 
     setInterviewList(response);
     setLoading(false); // data loaded

@@ -1,8 +1,6 @@
 "use client";
-import { MockInterview } from "@/utils/schema";
-import { eq } from "drizzle-orm";
 import React, { useEffect, useState, useMemo } from "react";
-import { db } from "@/utils/db";
+import { getInterviewById } from "@/actions/dashboard";
 import QuestionsList from "./_components/QuestionsList";
 import RecordAnswerSection from "./_components/RecordAnswerSection";
 import { Button } from "@/components/ui/button";
@@ -33,20 +31,17 @@ function StartInterview({ interviewId }) {
   const fetchInterviewData = async () => {
     try {
       setLoading(true);
-      const result = await db
-        .select()
-        .from(MockInterview)
-        .where(eq(MockInterview.mockId, interviewId));
+      const result = await getInterviewById(interviewId);
 
-      if (!result || result.length === 0) {
+      if (!result) {
         console.error("No interview data found for the given interview ID:", interviewId);
         setLoading(false);
         return;
       }
 
-      const questions = JSON.parse(result[0].jsonMockResp);
+      const questions = JSON.parse(result.jsonMockResp);
       setMockInterviewQuestions(questions);
-      setInterviewData(result[0]);
+      setInterviewData(result);
     } catch (error) {
       console.error("Error fetching interview details:", error);
     } finally {

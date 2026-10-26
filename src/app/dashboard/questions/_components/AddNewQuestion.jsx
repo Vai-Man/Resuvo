@@ -10,12 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoaderCircle } from "lucide-react";
-import { db } from "@/utils/db";
-import { Question } from "@/utils/schema";
-import moment from "moment";
+import { createQuestion } from "@/actions/dashboard";
 import { fetchAIResponse } from "@/utils/GeminiAIModal";
-import { useUser } from "@clerk/clerk-react";
-import { v4 as uuidv4 } from "uuid";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 function AddNewQuestion() {
@@ -24,7 +21,6 @@ function AddNewQuestion() {
   const [difficulty, setDifficulty] = useState("Easy");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { user } = useUser();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -52,14 +48,11 @@ function AddNewQuestion() {
               return;
             }
 
-      const output=await db.insert(Question).values({
+      const output = await createQuestion({
         question: jsonResponse,
         difficulty,
-        createdBy: user?.primaryEmailAddress?.emailAddress || "AI",
-        createdAt: moment().format("YYYY-MM-DD HH:mm:ss"),
         topic,
-        questionId: uuidv4()
-      }).returning({ questionId: Question.questionId });
+      });
 
       if (output) {
         setOpenDialog(false);

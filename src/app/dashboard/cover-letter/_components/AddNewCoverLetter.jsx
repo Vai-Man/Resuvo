@@ -11,13 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoaderCircle } from "lucide-react";
-import { db } from "@/utils/db";
-import { CoverLetterDesc } from "@/utils/schema";
-import { fetchAIResponse } from "@/utils/GeminiAIModal";
 import { useUser } from "@clerk/clerk-react";
-import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
-import moment from "moment";
 import { generateCoverLetter } from "@/actions/cover-letter";
 
 const AddNewCoverLetter = () => {

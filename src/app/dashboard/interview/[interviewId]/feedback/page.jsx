@@ -1,7 +1,5 @@
 "use client";
-import { db } from "@/utils/db";
-import { UserAnswer } from "@/utils/schema";
-import { eq } from "drizzle-orm";
+import { getInterviewFeedback } from "@/actions/dashboard";
 import React, { useEffect, useState } from "react";
 import {
   Collapsible,
@@ -30,11 +28,7 @@ const InterviewFeedbackPage = ({ interviewId }) => {
 
   const GetInterviewData = async () => {
     setLoading(true);
-    const result = await db
-      .select()
-      .from(UserAnswer)
-      .where(eq(UserAnswer.mockIdRef, interviewId))
-      .orderBy(UserAnswer.id);
+    const result = await getInterviewFeedback(interviewId);
 
     setFeedbackData(result);
     calculateAverageRating(result);

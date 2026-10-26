@@ -189,9 +189,7 @@ import useSpeechToText from "react-hook-speech-to-text";
 import { Mic, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useUser } from "@clerk/clerk-react";
-import { db } from "@/utils/db";
-import moment from "moment";
-import { UserAnswer } from "@/utils/schema";
+import { saveInterviewAnswer } from "@/actions/dashboard";
 import { fetchAIResponse } from "@/utils/GeminiAIModal";
 import { cn } from "@/lib/utils";
 
@@ -331,15 +329,13 @@ function RecordAnswerSection({
         return;
       }
 
-      await db.insert(UserAnswer).values({
+      await saveInterviewAnswer({
         mockIdRef: interviewData.mockId,
         question: questionText,
         correctAns: correctAnswer,
         userAns: userAnswer,
         feedback: jsonResponse?.feedback || "",
         rating: jsonResponse?.rating || "",
-        userEmail: user?.primaryEmailAddress?.emailAddress,
-        createdAt: moment().format("YYYY-MM-DD HH:mm:ss"),
       });
 
       toast.success("Answer saved successfully!");

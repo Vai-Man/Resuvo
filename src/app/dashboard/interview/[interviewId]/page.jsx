@@ -1,8 +1,6 @@
 "use client";
-import { MockInterview } from "@/utils/schema";
-import { eq } from "drizzle-orm";
 import React from "react";
-import { db } from "@/utils/db";
+import { getInterviewById } from "@/actions/dashboard";
 import Webcam from "react-webcam";
 import { Lightbulb, Loader2, WebcamIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,11 +23,8 @@ function Interview({ interviewId }) {
   const fetchInterviewDetails = async () => {
     try {
         setLoading(true);
-      const result = await db
-        .select()
-        .from(MockInterview)
-        .where(eq(MockInterview.mockId, interviewId));
-      setInterviewData(result[0]);
+      const result = await getInterviewById(interviewId);
+      setInterviewData(result);
     } catch (error) {
       console.error("Error fetching interview details:", error);
     }

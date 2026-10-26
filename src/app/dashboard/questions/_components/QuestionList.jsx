@@ -1,8 +1,6 @@
 "use client";
-import { db } from "@/utils/db";
-import { Question } from "@/utils/schema";
+import { getUserQuestions } from "@/actions/dashboard";
 import { useUser } from "@clerk/clerk-react";
-import { desc, eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
 import QuestionCardList from "./QuestionCardList";
 import { Loader2Icon } from "lucide-react";
@@ -19,11 +17,7 @@ const QuestionList = () => {
   const getQuestionList = async () => {
     setLoading(true);
     try {
-      const response = await db
-        .select()
-        .from(Question)
-        .where(eq(Question.createdBy, user?.primaryEmailAddress?.emailAddress))
-        .orderBy(desc(Question.id));
+      const response = await getUserQuestions();
 
       setQuestionList(response);
     } catch (error) {

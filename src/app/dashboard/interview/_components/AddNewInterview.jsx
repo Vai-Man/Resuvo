@@ -11,13 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoaderCircle } from "lucide-react";
-import { v4 as uuidv4 } from "uuid";
-import { MockInterview } from "@/utils/schema";
-import { useUser } from "@clerk/clerk-react";
-import moment from "moment";
 import { useRouter } from "next/navigation";
 import { fetchAIResponse } from "@/utils/GeminiAIModal";
-import { db } from "@/utils/db";
+import { createInterview } from "@/actions/dashboard";
 import pdfToText from "react-pdftotext";
 
 function AddNewInterview() {
@@ -29,7 +25,6 @@ function AddNewInterview() {
   const [resumeFile, setResumeFile] = useState(null);
   const [parsedResume, setParsedResume] = useState("");
   const [loading, setLoading] = useState(false);
-  const { user } = useUser();
   const router = useRouter();
 
   const extractText = (event) => {
@@ -72,19 +67,13 @@ function AddNewInterview() {
         .replace(/```json/g, "")
         .replace(/```/g, "");
 
-      const output = await db
-        .insert(MockInterview)
-        .values({
-          mockId: uuidv4(),
-          jsonMockResp: cleanResponse,
-          jobPosition: Jobpost || "Resume-based Interview",
-          jobDesc: JobDescription || "N/A",
-          jobExperience: Experience || "N/A",
-          parsedResume: parsedResume || null,
-          createdBy: user?.primaryEmailAddress?.emailAddress,
-          createdAt: moment().format("YYYY-MM-DD HH:mm:ss"),
-        })
-        .returning({ mockId: MockInterview.mockId });
+      const output = await createInterview({
+        jsonMockResp: cleanResponse,
+        jobPosition: Jobpost,
+        jobDesc: JobDescription,
+        jobExperience: Experience,
+        parsedResume,
+      });
 
       if (output) {
         setOpenDialog(false);

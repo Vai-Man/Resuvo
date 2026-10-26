@@ -1,11 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { db } from "@/utils/db"; // your db import
-import { CoverLetterDesc } from "@/utils/schema";
+import { updateCoverLetter } from "@/actions/dashboard";
 import { toast } from "sonner";
-import moment from "moment";
-import { eq } from "drizzle-orm";
 
 const EditableCoverLetter = ({ data }) => {
   const [coverLetter, setCoverLetter] = useState(data.coverLetter);
@@ -15,13 +12,7 @@ const EditableCoverLetter = ({ data }) => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await db
-        .update(CoverLetterDesc)
-        .set({
-          coverLetter,
-          updatedAt: moment().format("YYYY-MM-DD HH:mm:ss"),
-        })
-        .where(eq(CoverLetterDesc.coverLetterId, data.coverLetterId));
+      await updateCoverLetter(data.coverLetterId, coverLetter);
 
       toast.success("Cover letter saved!");
       setIsEditing(false);
